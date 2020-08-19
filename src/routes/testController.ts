@@ -52,4 +52,26 @@ router.post("/createTest", async (req: Request, res: Response) => {
     });
 });
 
+router.post("/saveTest", async (req: Request, res: Response) => {
+  const _id = req.body._id;
+  const testName = req.body.testName;
+  let questions = req.body.questions;
+  const testObject = {
+    _id: _id,
+    testData: {
+      testName: testName,
+      questions: questions,
+    },
+  };
+  test
+    .findOneAndUpdate({ _id: _id }, testObject)
+    .then((result) => {
+      res.send({ message: "success" }).status(200);
+    })
+    .catch((err) => {
+      res.send(err).status(500);
+    });
+  new test(testObject).toObject();
+});
+
 export default router;

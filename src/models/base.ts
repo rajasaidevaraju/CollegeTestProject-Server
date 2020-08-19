@@ -8,6 +8,7 @@ export default function initDb(callback: Function) {
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: false,
     },
     connected
   );
