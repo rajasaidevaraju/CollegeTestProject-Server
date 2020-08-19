@@ -1,14 +1,7 @@
 import { Request, Response, Router } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { validateLoginInput } from "../service/validation/login";
-import { validateRegisterInput } from "../service/validation/register";
-import isEmpty from "is-empty";
+
 import test from "../models/test/test.model";
-import {
-  LoginErrorConfig,
-  RegisterErrorConfig,
-} from "../service/validation/ErrorConfig";
+
 let router = Router();
 const secretKey = process.env.secretKey;
 
@@ -71,7 +64,17 @@ router.post("/saveTest", async (req: Request, res: Response) => {
     .catch((err) => {
       res.send(err).status(500);
     });
-  new test(testObject).toObject();
 });
 
+router.post("/deleteTest", async (req: Request, res: Response) => {
+  const _id = req.body._id;
+  test
+    .findByIdAndDelete({ _id })
+    .then((result) => {
+      res.send({ message: "success" }).status(200);
+    })
+    .catch((err) => {
+      res.send(err).status(500);
+    });
+});
 export default router;
