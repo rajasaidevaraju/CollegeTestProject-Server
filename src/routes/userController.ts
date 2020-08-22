@@ -41,6 +41,14 @@ router.post("/register", async (req: Request, res: Response) => {
   });
 });
 
+router.get("/forgotpassword", function (req, res) {
+  res.send(
+    '<form action="/passwordreset" method="POST">' +
+      '<input type="email" name="email" value="" placeholder="Enter your email address..." />' +
+      '<input type="submit" value="Reset Password" />' +
+      "</form>"
+  );
+});
 router.post("/login", (req, res) => {
   const errors: LoginErrorConfig = validateLoginInput(req.body);
   if (!isEmpty(errors)) {
@@ -52,7 +60,7 @@ router.post("/login", (req, res) => {
 
   User.findOne({ email }).then((user) => {
     if (!user) {
-      return res.status(404).json({ emailnotfound: "Email not found" });
+      return res.status(404).json({ email: "Email not found" });
     }
 
     bcrypt.compare(password, user.password).then((isMatch) => {
@@ -77,9 +85,7 @@ router.post("/login", (req, res) => {
           }
         );
       } else {
-        return res
-          .status(400)
-          .json({ passwordincorrect: "Password incorrect" });
+        return res.status(400).json({ password: "Password incorrect" });
       }
     });
   });

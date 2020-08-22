@@ -7,7 +7,7 @@ export interface IUsers extends Document {
   role: role;
 }
 
-enum role {
+export enum role {
   user = "user",
   educator = "educator",
   admin = "admin",

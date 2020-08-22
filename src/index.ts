@@ -7,8 +7,7 @@ import testRouter from "./routes/testController";
 import initDb from "./models/base";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-require("./service/passport")(passport);
-
+import "./service/passport";
 const os = require("os");
 const port = process.env.PORT;
 const cors = require("cors");
@@ -17,11 +16,11 @@ const app: Application = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
+app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use("/", router);
 app.use("/test", testRouter);
 app.use("/api/users", userRouter);
-app.use(passport.initialize());
 
 initDb((err: any) => {
   if (err) {
