@@ -20,7 +20,7 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use("/", router);
 app.use("/test", testRouter);
-app.use("/api/users", userRouter);
+app.use("/users", userRouter);
 
 initDb((err: any) => {
   if (err) {

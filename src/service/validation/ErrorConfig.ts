@@ -9,3 +9,7 @@ export interface LoginErrorConfig {
   email?: String;
   password?: String;
 }
+
+export interface EmailErrorConfig {
+  email?: String;
+}
