@@ -1,7 +1,7 @@
 import nodemailer, { TransportOptions } from "nodemailer";
 
-class Sendmail {
-  transporter = nodemailer.createTransport({
+class SendMail {
+  options: any = {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     secureConnection: true,
@@ -9,29 +9,30 @@ class Sendmail {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-  });
+  };
+  transporter = nodemailer.createTransport(this.options);
 
-  sendVerificationMail(reciever, code) {
+  sendVerificationMail(reciever: string, code: string) {
     let message = {
       from: process.env.EMAIL_USER,
       to: reciever,
       subject: "Confirm Email",
       text: "Please confirm your email",
       html:
-        "<p>Please confirm your email.the code for conformation is " +
+        "<p>Please confirm your email.The code for conformation is " +
         code +
         "</p>",
     };
     return new Promise((resolve, reject) => {
-      transporter.sendMail(message, (error, info) => {
+      this.transporter.sendMail(message, (error, info: any) => {
         if (error) {
           return reject(error);
         }
-        resolve("Message sent: %s", info.messageId);
+        resolve(info);
       });
     });
   }
   sendResetmail() {}
 }
 
-export default Sendmail;
+export default SendMail;

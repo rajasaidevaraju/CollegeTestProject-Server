@@ -5,8 +5,8 @@ export interface IUsers extends Document {
   password: string;
   date: Date;
   role: role;
-  isVerified:boolean;
-  code?:string;
+  isVerified: boolean;
+  code?: string;
 }
 
 export enum role {
@@ -31,12 +31,12 @@ const UserSchema: Schema = new Schema({
     type: Date,
     default: Date.now,
   },
-  isVerified:{
+  isVerified: {
     type: Boolean,
     required: true,
   },
-  code:{
-    type: Boolean,
+  code: {
+    type: String,
   },
   role: {
     type: String,

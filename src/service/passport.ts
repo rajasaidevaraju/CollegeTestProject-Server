@@ -16,6 +16,9 @@ module.exports = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     User.findById(jwt_payload.id)
       .then((user) => {
+        if (!user?.isVerified) {
+          return done(null, false);
+        }
         if (user) {
           return done(null, user);
         }

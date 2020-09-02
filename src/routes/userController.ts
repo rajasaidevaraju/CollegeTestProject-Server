@@ -43,6 +43,40 @@ router.get("/forgotPassword", function (req, res) {
     res.send({ success: true });
   });
 });
+
+router.get("/verifyCode", (req, res) => {
+  new UserFunctions()
+    .verifyCodeWithEmail(
+      req.query.email!.toString(),
+      req.query.code!.toString()
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      let status = 500;
+      if ("message" in error) {
+        status = 400;
+      }
+      res.status(status).send(error);
+    });
+});
+router.post("/sendVerificationEmail", (req, res) => {
+  new UserFunctions()
+    .createCodeForAuthentication(req.body.email)
+    .then((result: any) => {
+      res.send({
+        message: "Code Sent to email " + req.body.email + " successfully ",
+      });
+    })
+    .catch((error) => {
+      let status = 500;
+      if ("message" in error) {
+        status = 400;
+      }
+      res.status(status).send(error);
+    });
+});
 router.post("/login", (req, res) => {
   const errors: LoginErrorConfig = validateLoginInput(req.body);
   if (!isEmpty(errors)) {

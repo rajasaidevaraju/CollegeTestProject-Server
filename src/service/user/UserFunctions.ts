@@ -1,7 +1,7 @@
-import User from "../../models/users/users.model";
+import User, { IUsers } from "../../models/users/users.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IUsers } from "./../../models/users/users.model";
+import SendMail from "./SendMail";
 export default class UserFunctions {
   secretKey: string = process.env.secretKey || "";
 
@@ -16,9 +16,68 @@ export default class UserFunctions {
     });
   }
 
+  verifyCodeWithEmail(email: string, code: string) {
+    return new Promise((resolve, reject) => {
+      this.verifyUserWithEmail(email, false)
+        .then((result: any) => {
+          if (result) {
+            if (!result.isVerified) {
+              if (result.code !== code) {
+                reject({
+                  message:
+                    "The verification code you entered isn't valid. Please check the code and try again.",
+                });
+              } else {
+                result.isVerified = true;
+                result.save();
+                resolve({ message: "Your account is verified" });
+              }
+            } else {
+              reject({ message: "Account already verified" });
+            }
+          } else {
+            reject({ message: "Account not registered yet" });
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  createCodeForAuthentication(email: string) {
+    return new Promise((resolve, reject) => {
+      this.verifyUserWithEmail(email, false)
+        .then((result: any) => {
+          if (result) {
+            const code: string = Math.floor(
+              100000 + Math.random() * 900000
+            ).toString();
+            result.code = code;
+            result.save();
+            if (!result.isVerified) {
+              new SendMail()
+                .sendVerificationMail(email, code)
+                .then((result) => {
+                  resolve();
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            } else {
+              reject({ message: "Account already verified" });
+            }
+          } else {
+            reject({ message: "Account not registered yet" });
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
   registerUser(body: any) {
     return new Promise((resolve, reject) => {
-      console.log(body);
       this.verifyUserWithEmail(body.email, false)
         .then((user) => {
           if (user) {
