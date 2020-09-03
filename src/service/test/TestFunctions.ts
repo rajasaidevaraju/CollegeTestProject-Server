@@ -6,6 +6,7 @@ export default class TestFunctions {
     return new Promise((resolve, reject) => {
       const testObject = {
         _id: test_id,
+        createdBy: user_id,
         testData: {
           testName: testName,
           questions: {},
@@ -99,13 +100,13 @@ export default class TestFunctions {
 
         const answers = submissionData.answers;
         const questions = testData.testData.questions;
-
-        for (let question_id of Object.keys(questions)) {
-          if (answers && answers[question_id]) {
-            questions[question_id].answers = answers[question_id];
+        if (questions) {
+          for (let question_id of Object.keys(questions)) {
+            if (answers && answers[question_id]) {
+              questions[question_id].answers = answers[question_id];
+            }
           }
         }
-
         resolve(testData);
       } catch (error) {
         reject(error);

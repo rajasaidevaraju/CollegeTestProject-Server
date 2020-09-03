@@ -8,6 +8,7 @@ enum type {
 const quizSchema: Schema = new Schema(
   {
     _id: { type: String, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "users" },
     testData: {
       testName: {
         type: String,
