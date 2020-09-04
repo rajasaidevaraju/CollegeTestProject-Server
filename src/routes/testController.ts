@@ -1,16 +1,13 @@
 import { Request, Response, Router } from "express";
 import passport from "passport";
-import test from "../models/test/test.model";
-import submitter from "../models/test/submitter.model";
 import TestFunctions from "./../service/test/TestFunctions";
 import checkIsInRole from "./../service/utils";
 import { role } from "./../models/users/users.model";
 let router = Router();
 const secretKey = process.env.secretKey;
-
+router.use(passport.authenticate("jwt", { session: false }));
 router.get(
   "/getAllTest",
-  passport.authenticate("jwt", { session: false }),
   checkIsInRole(role.educator, role.admin, role.user),
   async (req: any, res: Response) => {
     const userId: string = req.user._id;
@@ -30,7 +27,6 @@ router.get(
 
 router.post(
   "/createTest",
-  passport.authenticate("jwt", { session: false }),
   checkIsInRole(role.educator, role.admin),
   async (req: any, res: Response) => {
     const _id = req.body._id;
@@ -52,7 +48,6 @@ router.post(
 
 router.post(
   "/saveTest",
-  passport.authenticate("jwt", { session: false }),
   checkIsInRole(role.educator, role.admin),
   async (req: any, res: Response) => {
     try {
@@ -64,16 +59,10 @@ router.post(
   }
 );
 
-router.post(
-  "/submitTest",
-  passport.authenticate("jwt", { session: false }),
-  checkIsInRole(role.user),
-  (req, res) => {}
-);
+router.post("/submitTest", checkIsInRole(role.user), (req, res) => {});
 
 router.post(
   "/deleteTest",
-  passport.authenticate("jwt", { session: false }),
   checkIsInRole(role.educator, role.admin),
   async (req: Request, res: Response) => {
     const _id = req.body._id;

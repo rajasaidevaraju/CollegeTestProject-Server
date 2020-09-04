@@ -5,8 +5,11 @@ const checkIsInRole = (...roles: role[]) => (
   res: Response,
   next: NextFunction
 ) => {
-  const userRole = req.user.role;
-  const hasRole = roles.find((role) => userRole === role);
+  let hasRole: role | undefined;
+  if (req.user) {
+    const userRole = req.user.role;
+    hasRole = roles.find((role) => userRole === role);
+  }
   if (!hasRole) {
     return res.redirect("/Login");
   }

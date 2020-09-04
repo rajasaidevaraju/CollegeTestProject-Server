@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import router from "./routes/videoController";
 import userRouter from "./routes/userController";
 import testRouter from "./routes/testController";
+import classRouter from "./routes/classController";
 import initDb from "./models/base";
 import passport from "passport";
 import cookieParser from "cookie-parser";
@@ -21,7 +22,7 @@ app.use(bodyParser.json());
 app.use("/", router);
 app.use("/test", testRouter);
 app.use("/users", userRouter);
-
+app.use("/class", classRouter);
 initDb((err: any) => {
   if (err) {
     throw err;
