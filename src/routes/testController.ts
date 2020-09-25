@@ -51,7 +51,7 @@ router.post(
   checkIsInRole(role.educator, role.admin),
   async (req: any, res: Response) => {
     try {
-      await new TestFunctions().saveTest(req.body, req.user);
+      await new TestFunctions().saveTest(req.body.testData, req.user);
       res.status(200).send("OK");
     } catch (error) {
       res.status(500).send(error);

@@ -7,10 +7,8 @@ export default class TestFunctions {
       const testObject = {
         _id: test_id,
         createdBy: user_id,
-        testData: {
-          testName: testName,
-          questions: {},
-        },
+        testName: testName,
+        questions: {},
       };
 
       const submissionObject = {
@@ -43,10 +41,9 @@ export default class TestFunctions {
   }
   async saveQuestion(testData: any, userData: any) {
     let _id = testData._id;
-    delete testData._id;
 
-    let result = await test.findOneAndUpdate(_id, {
-      testData: { ...testData },
+    let result = await test.findByIdAndUpdate(_id, {
+      ...testData,
     });
   }
 
@@ -57,13 +54,8 @@ export default class TestFunctions {
       userID,
       quizID,
     };
-    let answers: any = {};
-    const questions = testData.questions;
-
-    for (let question of Object.keys(questions)) {
-      answers[question] = questions[question].answers;
-      delete questions[question].answers;
-    }
+    let answers: any = testData.answers;
+    delete testData.answers;
     let submitterObj = { ...query, answers };
     let isPresent = await submitter.findOneAndUpdate(query, submitterObj, {
       new: true,
@@ -82,32 +74,13 @@ export default class TestFunctions {
         for (submissionData of results) {
           const testID = submissionData.quizID;
           const testData = await test.findById({ _id: testID });
-          let mergedData: any = await this.mergeTest(submissionData, testData);
-
-          returnData[mergedData._id] = mergedData;
-        }
-        resolve(returnData);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  mergeTest(submissionData: any, testData: any) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let reurnValue: any = {};
-
-        const answers = submissionData.answers;
-        const questions = testData.testData.questions;
-        if (questions) {
-          for (let question_id of Object.keys(questions)) {
-            if (answers && answers[question_id]) {
-              questions[question_id].answers = answers[question_id];
-            }
+          if (testData) {
+            let testObject = testData?.toJSON();
+            testObject.answers = submissionData.answers;
+            returnData[testObject._id] = testObject;
           }
         }
-        resolve(testData);
+        resolve(returnData);
       } catch (error) {
         reject(error);
       }

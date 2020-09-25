@@ -1,17 +1,20 @@
 import { Request, Response, Router } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { validateLoginInput } from "./../service/validation/login";
 import { validateRegisterInput } from "./../service/validation/register";
 import { validateEmailInput } from "./../service/validation/email";
 import UserFunctions from "./../service/user/UserFunctions";
+import passport from "passport";
+import checkIsInRole from "./../service/utils";
 import isEmpty from "is-empty";
 import User from "../models/users/users.model";
+import { role } from "./../models/users/users.model";
+import AdminUserFunctions from "./../service/user/AdminUserFunctions";
 import {
   LoginErrorConfig,
   RegisterErrorConfig,
   EmailErrorConfig,
 } from "./../service/validation/ErrorConfig";
+
 let router = Router();
 const secretKey = process.env.secretKey;
 router.post("/register", async (req: Request, res: Response) => {
@@ -43,6 +46,22 @@ router.get("/forgotPassword", function (req, res) {
     res.send({ success: true });
   });
 });
+
+router.get(
+  "/getAllVisitors",
+  passport.authenticate("jwt", { session: false }),
+  checkIsInRole(role.admin),
+  (req, res) => {
+    new AdminUserFunctions()
+      .getAllUsers()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+);
 
 router.get("/verifyCode", (req, res) => {
   new UserFunctions()
